@@ -5,11 +5,12 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Все API эндпоинты начинаются с /api/
     path('api/', include('users.urls')),
     path('api/', include('recipes.urls')),
 ]
 
-# Чтобы картинки (media) открывались в браузере при разработке
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

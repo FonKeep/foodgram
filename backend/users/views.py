@@ -7,7 +7,6 @@ from .serializers import UserWithRecipesSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    # ... базовые методы (me, avatar) ...
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def subscriptions(self, request):

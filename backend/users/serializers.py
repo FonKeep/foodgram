@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from recipes.models import Recipe
+from recipes.serializers import RecipeMinifiedSerializer
 
 User = get_user_model()
 
 class UserWithRecipesSerializer(serializers.ModelSerializer):
-    """Сериализатор для работы с подписками (UserWithRecipes в OpenAPI)."""
+    """Сериализатор для работы с подписками."""
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(source='recipes.count')
     is_subscribed = serializers.BooleanField(default=True)
@@ -21,6 +22,4 @@ class UserWithRecipesSerializer(serializers.ModelSerializer):
         recipes = obj.recipes.all()
         if limit:
             recipes = recipes[:int(limit)]
-        # Импорт здесь во избежание циклической зависимости
-        from recipes.serializers import RecipeMinifiedSerializer
         return RecipeMinifiedSerializer(recipes, many=True).data

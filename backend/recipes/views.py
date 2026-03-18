@@ -16,10 +16,11 @@ from .serializers import (
     TagSerializer, IngredientSerializer, RecipeListSerializer,
     RecipeCreateSerializer, RecipeMinifiedSerializer
 )
+from .pagination import CustomPagination
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """Список и получение тегов."""
+    """Список тегов."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (permissions.AllowAny,)
@@ -27,7 +28,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """Список и получение ингредиентов с поиском по названию."""
+    """Список ингредиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (permissions.AllowAny,)
@@ -41,14 +42,12 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """
-    Вьюсет для работы с рецептами.
-    Поддерживает фильтрацию по тегам, автору, избранному и корзине.
-    """
+    """Рецепты."""
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
     filter_backend = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -64,7 +63,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def favorite(self, request, pk):
-        """Добавление/удаление рецепта в избранное."""
         if request.method == 'POST':
             return self._add_to_list(Favorite, request.user, pk)
         return self._remove_from_list(Favorite, request.user, pk)
@@ -75,7 +73,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
-        """Добавление/удаление рецепта в список покупок."""
         if request.method == 'POST':
             return self._add_to_list(ShoppingCart, request.user, pk)
         return self._remove_from_list(ShoppingCart, request.user, pk)
@@ -129,8 +126,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='get-link')
     def get_link(self, request, pk):
-        """Получение короткой ссылки на рецепт (согласно OpenAPI)."""
+        """Получение короткой ссылки на рецепт"""
         recipe = get_object_or_404(Recipe, id=pk)
-        # Здесь логика генерации ссылки, пока просто пример:
-        short_link = f"https://foodgram.example.org{recipe.id}"
+        base_url = request.build_absolute_uri('/')
+        short_link = f"{base_url.rstrip('/')}/s/{recipe.id}"
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
