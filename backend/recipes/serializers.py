@@ -67,7 +67,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
             user=user).exists()
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = serializers.ListField() # Принимаем список объектов {'id': 1, 'amount': 10}
+    ingredients = serializers.ListField()
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
