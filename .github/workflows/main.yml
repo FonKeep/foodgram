@@ -88,7 +88,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            printf '%s' "${{ secrets.FILE_SECRET }}" > /home/ubuntu/kitty/.env
+            printf '%s' "${{ secrets.FILE_SECRET }}" > /home/ubuntu/foodgram/.env
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
