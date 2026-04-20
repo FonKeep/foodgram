@@ -28,17 +28,15 @@ class UserViewSet(DjoserUserViewSet):
     def subscriptions(self, request):
         authors = User.objects.filter(following__user=request.user)
 
-        # 1. Сериализуем авторов
         serializer = UserWithRecipesSerializer(
             authors, many=True, context={'request': request}
         )
 
-        # 2. ВРУЧНУЮ собираем структуру пагинации, которую ждет фронтенд
         custom_response_data = {
             "count": authors.count(),
             "next": None,
             "previous": None,
-            "results": serializer.data # Кладем наш идеальный JSON сюда
+            "results": serializer.data
         }
 
         return Response(custom_response_data, status=status.HTTP_200_OK)

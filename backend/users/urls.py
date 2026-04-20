@@ -6,7 +6,7 @@ router = DefaultRouter()
 router.register('users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('', include(router.urls)),                  # 1. Ваш кастомный UserViewSet
-    path('auth/', include('djoser.urls.authtoken')), # 2. Логин/Логаут
-    path('', include('djoser.urls')),                 # 3. Базовый Djoser (регистрация и др.)
+    path('', include(router.urls)),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
 ]

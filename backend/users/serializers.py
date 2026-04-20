@@ -11,7 +11,14 @@ User = get_user_model()
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'password')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'password'
+        )
 
 
 class CustomUserSerializer(UserSerializer):
@@ -38,7 +45,10 @@ class UserWithRecipesSerializer(CustomUserSerializer):
 
     class Meta(CustomUserSerializer.Meta):
         model = User
-        fields = CustomUserSerializer.Meta.fields + ('recipes', 'recipes_count')
+        fields = CustomUserSerializer.Meta.fields + (
+            'recipes',
+            'recipes_count'
+        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -51,4 +61,7 @@ class UserWithRecipesSerializer(CustomUserSerializer):
         if limit and str(limit).isdigit():
             recipes = recipes[:int(limit)]
 
-        return RecipeMinifiedSerializer(recipes, many=True, context=self.context).data
+        return RecipeMinifiedSerializer(
+            recipes,
+            many=True,
+            context=self.context).data
