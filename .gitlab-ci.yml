@@ -1,0 +1,94 @@
+stages:
+  - build
+  - deploy
+
+# Переменные для ручного выбора в интерфейсе GitLab
+variables:
+  BUILD_BACKEND:
+    value: "true"
+    options:
+      - "true"
+      - "false"
+    description: "Собирать Backend?"
+  BUILD_FRONTEND:
+    value: "false"
+    options:
+      - "true"
+      - "false"
+    description: "Собирать Frontend?"
+  BUILD_GATEWAY:
+    value: "false"
+    options:
+      - "true"
+      - "false"
+    description: "Собирать Gateway (Nginx)?"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "push"
+      variables:
+        BUILD_BACKEND: "false"
+        BUILD_FRONTEND: "false"
+        BUILD_GATEWAY: "false"
+
+.build_template:
+  stage: build
+  image: docker:24.0.5
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+  before_script:
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+
+build_backend:
+  extends: .build_template
+  script:
+    - docker build ./backend/ -t "$DOCKER_USERNAME/foodgram_backend:latest"
+    - docker push "$DOCKER_USERNAME/foodgram_backend:latest"
+  rules:
+    - if: $BUILD_BACKEND == "true"
+
+build_frontend:
+  extends: .build_template
+  script:
+    - docker build ./frontend/ -t "$DOCKER_USERNAME/foodgram_frontend:latest"
+    - docker push "$DOCKER_USERNAME/foodgram_frontend:latest"
+  rules:
+    - if: $BUILD_FRONTEND == "true"
+
+build_gateway:
+  extends: .build_template
+  script:
+    - docker build ./nginx/ -t "$DOCKER_USERNAME/foodgram_gateway:latest"
+    - docker push "$DOCKER_USERNAME/foodgram_gateway:latest"
+  rules:
+    - if: $BUILD_GATEWAY == "true"
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  # Убираем жесткий needs, чтобы деплой не ждал пропущенные задачи
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan "$HOST" >> ~/.ssh/known_hosts
+  script:
+    - scp docker-compose.yml "$USER@$HOST:~/foodgram/docker-compose.yml"
+    - |
+      ssh "$USER@$HOST" "
+        cd foodgram &&
+        echo '$FILE_SECRET' > .env &&
+        sudo docker compose pull &&
+        sudo docker compose up -d &&
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        sudo docker compose exec -T backend python manage.py migrate --noinput &&
+        sudo docker compose exec -T backend python manage.py collectstatic --noinput
+      "
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual # Деплой по пушу только вручную, если надо

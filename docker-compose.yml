@@ -16,11 +16,11 @@ services:
     image: fonkeep/foodgram_backend
     env_file: .env
     volumes:
-      - static:/static
+      - static:/app/static
       - media_value:/app/media
     depends_on:
       - db
-    restart: on-failure
+    restart: always
   frontend:
     image: fonkeep/foodgram_frontend
     env_file: .env

@@ -140,3 +140,4 @@ dmypy.json
 
 static/
 media/
+/docs/openapi-schema.yml.pdf
