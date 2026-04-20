@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from users.models import User
 
+
 class Tag(models.Model):
     name = models.CharField('Название', max_length=32, unique=True)
     slug = models.SlugField('Слаг', max_length=32, unique=True)
@@ -10,6 +11,7 @@ class Tag(models.Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
+
 class Ingredient(models.Model):
     name = models.CharField('Название', max_length=128)
     measurement_unit = models.CharField('Единицы измерения', max_length=64)
@@ -17,6 +19,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -42,6 +45,7 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
+
 class IngredientInRecipe(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
@@ -55,6 +59,7 @@ class IngredientInRecipe(models.Model):
                 fields=['recipe', 'ingredient'],
                 name='unique_ingredient_in_recipe')
         ]
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -77,6 +82,7 @@ class Favorite(models.Model):
                 name='unique_favorite'
             )
         ]
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(

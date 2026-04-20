@@ -36,8 +36,10 @@ class CustomUserSerializer(UserSerializer):
             return False
         return user.follower.filter(author=obj).exists()
 
+
 class AvatarSerializer(serializers.Serializer):
     avatar = Base64ImageField(required=True)
+
 
 class UserWithRecipesSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField(read_only=True)
