@@ -1,5 +1,5 @@
 from django_filters import rest_framework as django_filters
-from rest_framework import filters
+from rest_framework import filters as drf_filters
 
 from .models import Recipe, Tag
 
@@ -32,5 +32,5 @@ class RecipeFilter(django_filters.FilterSet):
         return queryset
 
 
-class IngredientSearchFilter(filters.SearchFilter):
+class IngredientSearchFilter(drf_filters.SearchFilter):
     search_param = 'name'
