@@ -4,6 +4,7 @@ from rest_framework.filters import SearchFilter
 
 from .models import Recipe, Tag
 
+
 class RecipeFilter(FilterSet):
     tags = ModelMultipleChoiceFilter(
         field_name='tags__slug',
