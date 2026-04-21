@@ -19,7 +19,6 @@ from .serializers import (
 )
 
 
-
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Список тегов."""
     queryset = Tag.objects.all()

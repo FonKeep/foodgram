@@ -5,7 +5,6 @@ from rest_framework import serializers
 from .models import Ingredient, IngredientInRecipe, Recipe, Tag, User
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 

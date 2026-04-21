@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -7,18 +6,18 @@ from users.models import User
 from . import const
 
 
-
 User = get_user_model()
+
 
 class Tag(models.Model):
     name = models.CharField(
         'Название',
-        max_length= const.NAME_SLUG_MAX_LENGTH,
+        max_length=const.NAME_SLUG_MAX_LENGTH,
         unique=True
     )
     slug = models.SlugField(
         'Слаг',
-        max_length= const.NAME_SLUG_MAX_LENGTH,
+        max_length=const.NAME_SLUG_MAX_LENGTH,
         unique=True
     )
 
