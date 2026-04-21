@@ -1,8 +1,7 @@
 from django_filters import rest_framework as django_filters
-from rest_framework import filters as drf_filters
+from rest_framework import filters
 
 from .models import Recipe, Tag
-
 
 class RecipeFilter(django_filters.FilterSet):
     tags = django_filters.ModelMultipleChoiceFilter(
@@ -32,5 +31,5 @@ class RecipeFilter(django_filters.FilterSet):
         return queryset
 
 
-class IngredientSearchFilter(drf_filters.SearchFilter):
+class IngredientSearchFilter(filters.SearchFilter):
     search_param = 'name'
