@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from .models import Tag, Ingredient, Recipe, IngredientInRecipe
 
-User = get_user_model()
+from .models import Ingredient, IngredientInRecipe, Recipe, Tag, User
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -122,6 +122,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ) for ingredient in ingredients
         ])
 
+    @transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
@@ -130,6 +131,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         self.create_ingredients(ingredients, recipe)
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         self.create_ingredients(validated_data.pop('ingredients'), instance)

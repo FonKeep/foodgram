@@ -1,11 +1,23 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MinValueValidator
 from users.models import User
+import const
 
+
+User = get_user_model()
 
 class Tag(models.Model):
-    name = models.CharField('Название', max_length=32, unique=True)
-    slug = models.SlugField('Слаг', max_length=32, unique=True)
+    name = models.CharField(
+        'Название',
+        max_length= const.NAME_SLUG_MAX_LENGTH,
+        unique=True
+    )
+    slug = models.SlugField(
+        'Слаг',
+        max_length= const.NAME_SLUG_MAX_LENGTH,
+        unique=True
+    )
 
     class Meta:
         verbose_name = 'Тег'
@@ -13,8 +25,14 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField('Название', max_length=128)
-    measurement_unit = models.CharField('Единицы измерения', max_length=64)
+    name = models.CharField(
+        'Название',
+        max_length=const.INGREDIENT_NAME_MAX_LENGTH
+    )
+    measurement_unit = models.CharField(
+        'Единицы измерения',
+        max_length=const.MEASUREMENT_UNIT_MAX_LENGTH
+    )
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -28,7 +46,10 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Автор'
     )
-    name = models.CharField('Название', max_length=256)
+    name = models.CharField(
+        'Название',
+        max_length=const.RECIPE_NAME_MAX_LENGTH
+    )
     image = models.ImageField('Картинка', upload_to='recipes/')
     text = models.TextField('Описание')
     ingredients = models.ManyToManyField(
@@ -36,7 +57,9 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(Tag, verbose_name='Теги')
     cooking_time = models.PositiveSmallIntegerField(
-        'Время приготовления', validators=[MinValueValidator(1)]
+        'Время приготовления', validators=[MinValueValidator(
+            const.MIN_COOKING_TIME
+        )]
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
@@ -50,7 +73,7 @@ class IngredientInRecipe(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
-        'Количество', validators=[MinValueValidator(1)]
+        'Количество', validators=[MinValueValidator(const.MIN_AMOUNT)]
     )
 
     class Meta:
