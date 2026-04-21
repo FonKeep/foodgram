@@ -129,6 +129,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         short_link = f"{base_url.rstrip('/')}/s/{recipe.id}"
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
 
-    def recipe_short_link_redirect(request, recipe_id):
-        get_object_or_404(Recipe, id=recipe_id)
-        return redirect(f'/recipes/{recipe_id}/')
+def recipe_short_link_redirect(request, recipe_id):
+    get_object_or_404(Recipe, id=recipe_id)
+    return redirect(f'/recipes/{recipe_id}/')
