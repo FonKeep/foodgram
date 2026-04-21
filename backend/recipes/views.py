@@ -6,7 +6,7 @@ from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IngredientSearchFilter, RecipeFilter
 from .models import (
     Favorite, Ingredient, IngredientInRecipe, Recipe,
     ShoppingCart, Tag
@@ -33,9 +33,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientSearchFilter,)
     search_fields = ('^name',)
-    search_param = 'name'
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

@@ -29,3 +29,7 @@ class RecipeFilter(filters.FilterSet):
             return queryset.filter(
                 in_shopping_cart__user=self.request.user).distinct()
         return queryset
+
+
+class IngredientSearchFilter(filters.SearchFilter):
+    search_param = 'name'
