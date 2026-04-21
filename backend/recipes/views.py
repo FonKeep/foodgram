@@ -1,6 +1,6 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -128,3 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         base_url = request.build_absolute_uri('/')
         short_link = f"{base_url.rstrip('/')}/s/{recipe.id}"
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
+
+    def recipe_short_link_redirect(request, recipe_id):
+        get_object_or_404(Recipe, id=recipe_id)
+        return redirect(f'/recipes/{recipe_id}/')
